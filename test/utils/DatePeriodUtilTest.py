@@ -46,6 +46,21 @@ class DatePeriodUtilTest(unittest.TestCase):
 
     def test_for_non_overlapping_period_after(self):
         self.assertFalse(DatePeriodUtil.are_overlapping(self.BASE_PERIOD, self.PERIOD_AFTER))
+       
+    #Putting variables here is obv bad but it's for showcasing this (now fixed) bug.
+    periodA = DatePeriod(date(2000,5,23),date(2000,6,23))
+    periodB = DatePeriod(date(2000,5,24),date(2000,6,22))
+    #Period A sits wholly in B.
+
+    #This test tries is period A is within period B, which should be an overlap.
+    def test_overlap_A_in_B(self):
+        self.assertTrue(DatePeriodUtil.are_overlapping(self.periodA, self.periodB))
+        #This pairing should be an overlap, as A sits wholly within B.
+    
+    #This test tries is period B is within period A, which should be an overlap.
+    def test_overlap_B_in_A(self):
+        self.assertTrue(DatePeriodUtil.are_overlapping(self.periodB, self.periodA))
+        #This pairing should be an overlap, as B sits wholly within A.
 
 
 if __name__ == '__main__':
