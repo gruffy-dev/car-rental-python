@@ -14,9 +14,18 @@ class CarRentalCompany:
 
 
     def add_car(self, car: Car):
+        """
+        Adds a car to the inventory represented by self.cars
+        :param car: (Car) An instance of the Car object
+        """
         self.cars.append(car)
 
     def matching_cars(self, criteria: Criteria) -> list:
+        """
+        Returns a list of matching cars matching the supplied filter
+        :param criteria: (Criteria) An instance of the criteria class providing filter details
+        :return: (list) A list of available cars matching the criteria
+        """
         # This is a read operation so the lock really isn't going to do much within this context
         with self._rental_lock:
             # This method of filtering is extremely crude and should really not be used
@@ -40,11 +49,33 @@ class CarRentalCompany:
             return short_listed_cars
 
 
-    def rent_car(self, renter: Renter, car: Car, date_period: DatePeriod):
-        # This makes modifications to the inventory so this is where we need to have a lock to support multi threaded
+    def rent_car(self, renter: Renter, car: Car, date_period: DatePeriod) -> bool:
+        """
+        Marks a car in the inventory as being rented
+        :param renter: (Renter) An instance of the Renter class denoting the person making the booking
+        :param car: (Car) An instance of the Car class denoting the car that is to be booked
+        :param date_period: (DatePeriod) An instance of DatePeriod that provides the date range to book the car for
+        :return: (bool) A boolean representing whether the booking was successful
+        """
+        # This makes modifications to the inventory so this is where we need to have a lock to support multi-threaded
         # access
-        pass
+        with self._rental_lock:
+            if car.date_period:
+                # There is rental data here.
+                # TODO: This method is fairly limited as you cannot book a car more than once.  If the car is
+                # TODO: booked in the future, it is considered a non overlap and can be overwritten!
 
+                if not DatePeriodUtil.are_overlapping(date_period, car.date_period):
+                    car.date_period = date_period
+                    car.renter = renter
+                    return True
+                else:
+                    return False
+            else:
+                # We can just book it here
+                car.date_period = date_period
+                car.renter = renter
+                return True
 
 
     def return_car(self, renter, car):

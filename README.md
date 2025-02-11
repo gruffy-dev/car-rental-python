@@ -28,14 +28,15 @@ The coverage library is employed to measure code coverage for the test casts.  T
 % coverage run --source main -m unittest  && coverage report -m
 Name                              Stmts   Miss  Cover   Missing
 ---------------------------------------------------------------
-main/rental/Car.py                    7      0   100%
-main/rental/CarRentalCompany.py      11      2    82%   12, 15
-main/rental/Criteria.py               2      0   100%
+main/rental/Car.py                   38      0   100%
+main/rental/CarRentalCompany.py      39      1    97%   66
+main/rental/Criteria.py              12      0   100%
 main/rental/Renter.py                 7      0   100%
 main/utils/DatePeriod.py             10      0   100%
 main/utils/DatePeriodUtil.py          8      0   100%
 ---------------------------------------------------------------
-TOTAL                                45      2    96%
+TOTAL                               114      1    99%
+
 ```
 
 # Thoughts on Productionisation
