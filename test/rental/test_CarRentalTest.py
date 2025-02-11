@@ -36,4 +36,7 @@ class CarRentalTest(unittest.TestCase):
 
     def test_story_1_one_method_returning_a_list_of_matching_cars(self):
         # Here we assume that we extend the Criteria object to start with a simple match in rental_group
-        pass
+        criteria = Criteria(rental_group='A1')
+        cars_available = self._car_rental_company.matching_cars(criteria)
+        # Using the "A1" rental group, we can see that this matches 2 cars
+        self.assertEqual(len(cars_available), 2)
