@@ -59,10 +59,6 @@ class Car:
     def renter(self, renter: Renter):
         self._renter = renter
 
-    @renter.deleter
-    def renter(self):
-        self._renter = None
-
     @property
     def date_period(self) -> DatePeriod:
         return self._date_period
@@ -70,11 +66,3 @@ class Car:
     @date_period.setter
     def date_period(self, date_period: DatePeriod):
         self._date_period = date_period
-
-    @date_period.deleter
-    def date_period(self):
-        self._date_period = None
-
-
-
-
