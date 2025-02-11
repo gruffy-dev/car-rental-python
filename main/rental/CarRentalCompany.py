@@ -40,10 +40,26 @@ class CarRentalCompany:
             return short_listed_cars
 
 
-    def rent_car(self, renter: Renter, car: Car, date_period: DatePeriod):
+    def rent_car(self, renter: Renter, car: Car, date_period: DatePeriod) -> bool:
         # This makes modifications to the inventory so this is where we need to have a lock to support multi threaded
         # access
-        pass
+        with self._rental_lock:
+            if car.date_period:
+                # There is rental data here.
+                # TODO: This method is fairly limited as you cannot book a car more than once.  If the car is
+                # TODO: booked in the future, it is considered a non overlap and can be overwritten!
+
+                if not DatePeriodUtil.are_overlapping(date_period, car.date_period):
+                    car.date_period = date_period
+                    car.renter = renter
+                    return True
+                else:
+                    return False
+            else:
+                # We can just book it here
+                car.date_period = date_period
+                car.renter = renter
+                return True
 
 
 

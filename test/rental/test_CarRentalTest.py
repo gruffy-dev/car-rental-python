@@ -15,20 +15,20 @@ def rent_car(self, renter: Renter, car):
 
 class CarRentalTest(unittest.TestCase):
 
-    CAR1 = Car("VW", "Golf", "XX11 1UR", "B2", 90)
-    CAR2 = Car("VW", "Passat", "XX12 2UR", "C1", 110)
-    CAR3 = Car("VW", "Polo", "XX13 3UR", "A1", 65)
-    CAR4 = Car("VW", "Polo", "XX14 4UR", "A1", 70)
-
-    RENTER1 = Renter("Hydrogen", "Joe", "HYDRO010190JX8NM", datetime.date(1990, 1, 1))
-    RENTER2 = Renter("Calcium", "Sam", "CALCI010203SX8NM", datetime.date(2003, 2, 1))
-    RENTER3 = Renter("Neon", "Maisy", "NEONN010398MX8NM", datetime.date(1998, 3, 1))
-    RENTER4 = Renter("Carbon", "Greta", "CARBO010497GX8NM", datetime.date(1997, 4, 1))
-
     def setUp(self):
         """
         Instead of creating the inventory list within each test, we do it once in the setup
         """
+        self.CAR1 = Car("VW", "Golf", "XX11 1UR", "B2", 90)
+        self.CAR2 = Car("VW", "Passat", "XX12 2UR", "C1", 110)
+        self.CAR3 = Car("VW", "Polo", "XX13 3UR", "A1", 65)
+        self.CAR4 = Car("VW", "Polo", "XX14 4UR", "A1", 70)
+
+        self.RENTER1 = Renter("Hydrogen", "Joe", "HYDRO010190JX8NM", datetime.date(1990, 1, 1))
+        self.RENTER2 = Renter("Calcium", "Sam", "CALCI010203SX8NM", datetime.date(2003, 2, 1))
+        self.RENTER3 = Renter("Neon", "Maisy", "NEONN010398MX8NM", datetime.date(1998, 3, 1))
+        self.RENTER4 = Renter("Carbon", "Greta", "CARBO010497GX8NM", datetime.date(1997, 4, 1))
+
         self._car_rental_company = CarRentalCompany()
         self._car_rental_company.add_car(self.CAR1)
         self._car_rental_company.add_car(self.CAR2)
@@ -111,3 +111,52 @@ class CarRentalTest(unittest.TestCase):
         self.assertEqual(len(cars_available), 1)
         self.assertEqual(cars_available[0].registration_number, 'XX14 4UR')
 
+    def test_story_3_the_car_rental_should_be_stored_in_an_object_model(self):
+        # The acceptance test criteria here is very vague
+
+        from_date = datetime.date(year=2025, month=2, day=1)
+        to_date = datetime.date(year=2025, month=2, day=10)
+        date_period = DatePeriod(start=from_date, end=to_date)
+        car_to_rent = self._car_rental_company.cars[0]
+
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent, date_period=date_period)
+
+        self.assertTrue(success)
+
+        # Let us assume that if we can interrogate all the properties in the rental, then it is an object
+        self.CAR1 = Car("VW", "Golf", "XX11 1UR", "B2", 90)
+
+        self.assertEqual(self._car_rental_company.cars[0].make, 'VW')
+        self.assertEqual(self._car_rental_company.cars[0].model, 'Golf')
+        self.assertEqual(self._car_rental_company.cars[0].registration_number, 'XX11 1UR')
+        self.assertEqual(self._car_rental_company.cars[0].rental_group, 'B2')
+        self.assertEqual(self._car_rental_company.cars[0].cost_per_day, 90)
+        self.assertEqual(self._car_rental_company.cars[0].renter, self.RENTER1)
+        self.assertEqual(self._car_rental_company.cars[0].date_period, date_period)
+
+    def test_story_3_there_should_not_be_able_to_have_overlapping_car_rentals_for_the_same_car(self):
+        from_date = datetime.date(year=2025, month=2, day=1)
+        to_date = datetime.date(year=2025, month=2, day=10)
+        date_period = DatePeriod(start=from_date, end=to_date)
+        car_to_rent = self._car_rental_company.cars[0]
+
+        # The first booking is successful
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent, date_period=date_period)
+        self.assertTrue(success)
+
+        # The second booking fails as it is an overlap
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent, date_period=date_period)
+        self.assertFalse(success)
+
+    def test_story_3_two_renters_should_not_be_able_to_book_the_same_car_at_the_same_time_for_an_overlapping_period(self):
+        pass
+
+    def test_story_3_one_method_allowing_the_car_renter_to_book_a_car_for_a_period(self):
+        from_date = datetime.date(year=2025, month=2, day=1)
+        to_date = datetime.date(year=2025, month=2, day=10)
+        date_period = DatePeriod(start=from_date, end=to_date)
+        car_to_rent = self._car_rental_company.cars[0]
+
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent, date_period=date_period)
+
+        self.assertTrue(success)
