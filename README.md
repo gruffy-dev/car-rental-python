@@ -1,4 +1,4 @@
-# Docuentation stub for car-rental-python
+# Documentation stub for car-rental-python
 
 # Prerequisites
 
@@ -13,7 +13,6 @@ These set of classes have been tested on Python 3.9.6.
 ```
 % python3 -m venv venv
 % pip install -r requirements.txt
-
 ```
 
 # Usage
