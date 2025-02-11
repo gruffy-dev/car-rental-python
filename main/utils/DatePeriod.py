@@ -1,5 +1,6 @@
 from datetime import date
 
+# This class is not very pythonic but as there are unit tests written against it, we will not refactor
 
 class DatePeriod:
     def __init__(self, start, end):
