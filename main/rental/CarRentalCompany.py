@@ -62,6 +62,5 @@ class CarRentalCompany:
                 return True
 
 
-
     def return_car(self, renter, car):
         pass

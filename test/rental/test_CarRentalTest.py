@@ -5,6 +5,7 @@ from main.rental.Car import Car
 from main.rental.Criteria import Criteria
 from main.rental.CarRentalCompany import CarRentalCompany
 from main.utils.DatePeriod import DatePeriod
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def rent_car(self, renter: Renter, car):
@@ -149,7 +150,35 @@ class CarRentalTest(unittest.TestCase):
         self.assertFalse(success)
 
     def test_story_3_two_renters_should_not_be_able_to_book_the_same_car_at_the_same_time_for_an_overlapping_period(self):
-        pass
+        from_date = datetime.date(year=2025, month=2, day=1)
+        to_date = datetime.date(year=2025, month=2, day=10)
+        date_period = DatePeriod(start=from_date, end=to_date)
+        car_to_rent = self._car_rental_company.cars[0]
+
+        futures = []
+        results = []
+
+        # This is a very rudimentary test to indicate that if you make 5 simultaneous bookings, only one will succeed
+        # TODO: Consider diversifying the inputs such that we can check that the rental isn't overwritten by
+        # TODO: any subsequent/simultaneous updates
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for _ in range(5):
+                futures.append(executor.submit(self._car_rental_company.rent_car, renter=self.RENTER1, car=car_to_rent, date_period=date_period))
+
+            for future in as_completed(futures):
+                result = future.result()
+                results.append(result)
+
+
+        self.assertEqual(car_to_rent.renter, self.RENTER1)
+        self.assertEqual(car_to_rent.date_period, date_period)
+
+        # One successful booking
+        self.assertEqual(len([x for x in results if x]), 1)
+
+        # Four failed booking
+        self.assertEqual(len([x for x in results if not x]), 4)
 
     def test_story_3_one_method_allowing_the_car_renter_to_book_a_car_for_a_period(self):
         from_date = datetime.date(year=2025, month=2, day=1)
@@ -160,3 +189,54 @@ class CarRentalTest(unittest.TestCase):
         success = self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent, date_period=date_period)
 
         self.assertTrue(success)
+
+    def test_additional_non_overlapping_dates_rent_car(self):
+        # This test is actually the bad test.  What happens is if you have a date that does not overlap, you can
+        # overwrite the booking data completely.
+
+        date_period_1 = DatePeriod(start=datetime.date(year=2025, month=2, day=1), end=datetime.date(year=2025, month=2, day=5))
+        date_period_2 = DatePeriod(start=datetime.date(year=2025, month=2, day=10), end=datetime.date(year=2025, month=2, day=15))
+
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=self._car_rental_company.cars[0], date_period=date_period_2)
+
+        self.assertTrue(success)
+        self.assertEqual(self._car_rental_company.cars[0].renter, self.RENTER1)
+        self.assertEqual(self._car_rental_company.cars[0].date_period, date_period_2)
+
+        success = self._car_rental_company.rent_car(renter=self.RENTER2, car=self._car_rental_company.cars[0], date_period=date_period_1)
+
+        self.assertTrue(success)
+        self.assertEqual(self._car_rental_company.cars[0].renter, self.RENTER2)
+        self.assertEqual(self._car_rental_company.cars[0].date_period, date_period_1)
+
+    def test_additional_non_overlapping_dates_get_match(self):
+
+        date_period_1 = DatePeriod(start=datetime.date(year=2025, month=2, day=1), end=datetime.date(year=2025, month=2, day=5))
+        date_period_2 = DatePeriod(start=datetime.date(year=2025, month=2, day=10), end=datetime.date(year=2025, month=2, day=15))
+
+        success = self._car_rental_company.rent_car(renter=self.RENTER1, car=self._car_rental_company.cars[0], date_period=date_period_2)
+
+        self.assertTrue(success)
+        self.assertEqual(self._car_rental_company.cars[0].renter, self.RENTER1)
+        self.assertEqual(self._car_rental_company.cars[0].date_period, date_period_2)
+
+        # We know that there is only a single car in the B2 group and this what we booked above
+        criteria = Criteria(rental_group='B2', date_period=date_period_2)
+
+        available_cars = self._car_rental_company.matching_cars(criteria=criteria)
+
+        # If you use an overlapping booking date we get zero matches
+        self.assertEqual(len(available_cars), 0)
+
+        # However if there is no overlap the car is returned as available
+
+        criteria = Criteria(rental_group='B2', date_period=date_period_1)
+        available_cars = self._car_rental_company.matching_cars(criteria=criteria)
+        self.assertEqual(len(available_cars), 1)
+
+
+
+
+
+
+
