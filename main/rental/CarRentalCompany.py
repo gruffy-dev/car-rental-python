@@ -23,7 +23,11 @@ class CarRentalCompany:
                 return self.cars
 
     def rent_car(self, renter, car):
-        pass
+        # This makes modifications to the inventory so this is where we need to have a lock to support multi threaded
+        # access
+        with self._rental_lock:
+            pass
+
 
     def return_car(self, renter, car):
         pass

@@ -40,3 +40,21 @@ class CarRentalTest(unittest.TestCase):
         cars_available = self._car_rental_company.matching_cars(criteria)
         # Using the "A1" rental group, we can see that this matches 2 cars
         self.assertEqual(len(cars_available), 2)
+
+    def test_story_2_matching_criteria_for_a_renter_to_rent_a_car_should_include_from_and_to_date(self):
+        from_date = date(year=2025, month=2, day=1)
+        to_date = date(year=2025, month=2, day=10)
+        criteria = Criteria(from_date=from_date, to_date=to_date)
+
+        # The first set of asserts checks that the instance of the Critera class supports the from and to dates
+        self.assertEqual(criteria.from_date, from_date)
+        self.assertEqual(criteria.to_date, to_date)
+
+    def test_story_2_car_renter_should_not_be_show_any_cars_that_are_booked_in_the_period_supplied(self):
+        # In order to test this method, we should first be able to book a car
+        # At this point, no cars are booked so we can just pick the first one
+        car_to_rent = self._car_rental_company.cars[0]
+        self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent)
+
+    def test_story_2_one_method_returning_a_list_matching_cars_with_changed_filter(self):
+        pass
