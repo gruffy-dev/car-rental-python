@@ -1,18 +1,15 @@
-import datetime
+from datetime import date
 
-# Refactoring to more pythonic syntax
+# This class is not very pythonic but as there are unit tests written against it, we will not refactor
 
 class DatePeriod:
-    def __init__(self, start: datetime.date, end: datetime.date):
+    def __init__(self, start, end):
         assert start <= end, "Start date must be less than or equal to end date"
-        self._start = start
-        self._end = end
+        self.start = start
+        self.end = end
 
-    @property
-    def start(self) -> datetime.date:
-        return self._start
+    def get_start(self):
+        return self.start
 
-    @property
-    def end(self) -> datetime.date:
-        return self._end
-
+    def get_end(self):
+        return self.end

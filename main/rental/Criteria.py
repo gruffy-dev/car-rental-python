@@ -1,18 +1,16 @@
 import datetime
+from main.utils.DatePeriod import DatePeriod
 
 class Criteria:
-    def __init__(self, rental_group: str = None, from_date: datetime.date = None, to_date: datetime.date = None):
+    def __init__(self, rental_group: str = None, date_period: DatePeriod = None):
         """
         A Criteria class that allows is to pass the filter criteria required to obtain a short list of cars
         :param rental_group: (str) A car rental group
-        :param from_date: (datetime.date) The date the rental starts
-        :param to_date:  (datetime.date) The date the rental ends
+        :param date_period: (DatePeriod)  An instance od the DatePeriod object that contains the start and end time of the rental
         """
 
         self._rental_group = rental_group
-        self._from_date = from_date
-        self._to_date = to_date
-
+        self._date_period = date_period
 
     # There may not be a need to modify the values once the instance is created by the constructor so for the moment
     # we do not add any setter methods
@@ -22,11 +20,8 @@ class Criteria:
         return self._rental_group
 
     @property
-    def from_date(self) -> datetime.date:
-        return self._from_date
+    def date_period(self) -> DatePeriod:
+        return self._date_period
 
-    @property
-    def to_date(self) -> datetime.date:
-        return self._to_date
 
 
