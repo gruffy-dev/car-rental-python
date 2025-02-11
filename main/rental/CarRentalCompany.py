@@ -1,5 +1,7 @@
 from main.rental.Criteria import Criteria
 from main.rental.Car import Car
+from main.rental.Renter import Renter
+from main.utils.DatePeriod import DatePeriod
 import threading
 
 
@@ -22,7 +24,7 @@ class CarRentalCompany:
             else:
                 return self.cars
 
-    def rent_car(self, renter, car):
+    def rent_car(self, renter: Renter, car: Car, date_period: DatePeriod):
         # This makes modifications to the inventory so this is where we need to have a lock to support multi threaded
         # access
         with self._rental_lock:

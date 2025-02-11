@@ -4,6 +4,13 @@ from main.rental.Renter import Renter
 from main.rental.Car import Car
 from main.rental.Criteria import Criteria
 from main.rental.CarRentalCompany import CarRentalCompany
+from main.utils.DatePeriod import DatePeriod
+
+
+def rent_car(self, renter: Renter, car):
+
+
+    from main.utils.DatePeriod import DatePeriod
 
 
 class CarRentalTest(unittest.TestCase):
@@ -54,6 +61,7 @@ class CarRentalTest(unittest.TestCase):
         # In order to test this method, we should first be able to book a car
         # At this point, no cars are booked so we can just pick the first one
         car_to_rent = self._car_rental_company.cars[0]
+        date_period = DatePeriod()
         self._car_rental_company.rent_car(renter=self.RENTER1, car=car_to_rent)
 
     def test_story_2_one_method_returning_a_list_matching_cars_with_changed_filter(self):
