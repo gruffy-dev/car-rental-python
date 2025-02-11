@@ -15,23 +15,23 @@ class Car:
         self._cost_per_day = cost_per_day
 
     @property
-    def make(self):
+    def make(self) -> str:
         return self._make
 
     @property
-    def model(self):
+    def model(self) -> str:
         return self._model
 
     @property
-    def registration_number(self):
+    def registration_number(self) -> str:
         return self._registration_number
 
     @property
-    def rental_group(self):
+    def rental_group(self) -> str:
         return self._rental_group
 
     @property
-    def cost_per_day(self):
+    def cost_per_day(self) -> int:
         return self._cost_per_day
 
 

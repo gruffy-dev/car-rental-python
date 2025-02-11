@@ -18,14 +18,22 @@ class CarRentalTest(unittest.TestCase):
     RENTER3 = Renter("Neon", "Maisy", "NEONN010398MX8NM", date(1998, 3, 1))
     RENTER4 = Renter("Carbon", "Greta", "CARBO010497GX8NM", date(1997, 4, 1))
 
-    def test_list_cars_available_to_rent_gives_more_than_one_car(self):
-        car_rental_company = CarRentalCompany()
-        car_rental_company.add_car(self.CAR1)
-        car_rental_company.add_car(self.CAR2)
-        car_rental_company.add_car(self.CAR3)
-        car_rental_company.add_car(self.CAR4)
+    def setUp(self):
+        """
+        Instead of creating the inventory list within each test, we do it once in the setup
+        """
+        self._car_rental_company = CarRentalCompany()
+        self._car_rental_company.add_car(self.CAR1)
+        self._car_rental_company.add_car(self.CAR2)
+        self._car_rental_company.add_car(self.CAR3)
+        self._car_rental_company.add_car(self.CAR4)
 
+    def test_list_cars_available_to_rent_gives_more_than_one_car(self):
         criteria = Criteria()
-        cars_available = car_rental_company.matching_cars(criteria)
+        cars_available = self._car_rental_company.matching_cars(criteria)
 
         self.assertGreater(len(cars_available), 1)
+
+    def test_story_1_one_method_returning_a_list_of_matching_cars(self):
+        # Here we assume that we extend the Criteria object to start with a simple match in rental_group
+        pass
